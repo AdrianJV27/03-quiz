@@ -4,7 +4,7 @@ import type { Question } from "./types";
 interface State {
     currentQuestion: number
     questions: Question[];
-    getQuestions: () => void;
+    getQuestions: (category?: string, type?: string, difficulty?: string, amount?: string) => void;
     changeCurrentQuestion: (page: number) => void;
     isChangeQuestionPossible: (page: number) => boolean;
     selectAnswer: (answer: string, index: number) => void
@@ -13,8 +13,9 @@ interface State {
 export const useQuestionStore = create<State>()( (set, get) => ({
     currentQuestion: 0,
     questions: [],
-    getQuestions: () => {
-        fetch('https://opentdb.com/api.php?amount=10')
+    getQuestions: (category, type = 'boolean', difficulty = 'medium', amount = '10') => {
+        fetch(`https://opentdb.com/api.php?${amount ? `amount=${amount}` : ''}&${category ? `category=${category}` : ''}&${type ? `type=${type}` : ''}&${difficulty ? `difficulty=${difficulty}` : ''}
+            `)
         .then(res => res.json())
         .then(data => {
             const newQuestions = data.results.map( (item: Question) => {

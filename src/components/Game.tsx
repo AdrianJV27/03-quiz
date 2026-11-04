@@ -1,29 +1,10 @@
 import { useMemo } from "react"
 import { useQuestionStore } from "../store"
 import { QuestionSlider } from "./QuestionSlider"
-import type { Question } from "../types"
+import { punctuationQuestions } from "../helpers/punctuationQuestions"
+import { textParser } from "../helpers/parser"
 
-    const punctuationQuestions = (questions: Question[]) => {
 
-        const punctuation = {
-            correct: 0,
-            incorrect: 0,
-            unanswered: 0
-        }
-
-        questions.map( (item) => {
-            if(item.userSelect === item.correct_answer){
-                punctuation.correct++
-            }else if(item.userSelect === undefined){
-                punctuation.unanswered++
-            }else{
-                punctuation.incorrect++
-            }
-        })
-
-        return punctuation
-
-    }
 
 export function Game() {
     const questions = useQuestionStore((state) => state.questions)
@@ -34,7 +15,7 @@ export function Game() {
         return questions[currentQuestion]
     }, [currentQuestion, questions])
 
-    //Podria hacer un use memo pero no se si es mejor dejarlo asi
+    //Podria hacer un useMemo pero no se si es mejor dejarlo asi
     const {correct, incorrect, unanswered} = punctuationQuestions(questions)
 
     const checkAnswer = (item: string) => {
@@ -46,19 +27,17 @@ export function Game() {
         }else{ return '' }
     }
 
-
-
     return (
         <div className="flex flex-col gap-3.5">
             <div className='questions-number w-full text-xl p-3'>
-                <p>Pregunta {currentQuestion + 1} de 10</p>
+                <p>Pregunta {currentQuestion + 1} de {questions.length}</p>
                 <div className="w-full bg-amber-100 rounded-full h-2 mt-3">
                     <div className="bg-amber-600 h-2 rounded-full w-3 transition-all" style={{width: `${(currentQuestion+1)*100/questions.length}%`}}></div>
                 </div>
             </div>
             <div className='card min-h-96 border p-10 rounded-4xl shadow-2xl bg-sky-950'>
                 <div className='question text-3xl p-3'>
-                    <h3>{question.question}</h3>
+                    <h3>{textParser(question.question)}</h3>
                 </div>
                 <div className='answer p-3'>
                     <ul className='flex flex-col gap-1.5 text-2xl'>
@@ -73,7 +52,7 @@ export function Game() {
                             key={item} 
                             style={{backgroundColor: checkAnswer(item)}} 
                             className='rounded-4xl transition-colors border-2 p-4 hover:bg-sec-c cursor-pointer'>
-                            {item}
+                            {textParser(item)}
                             </li>
                             )
                         })
