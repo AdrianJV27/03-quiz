@@ -1,0 +1,9 @@
+Quiero almacenar la respuesta del usuario
+
+
+Para futuro usar react query para cuando le doy a play y tener opcion de configurar
+la partida como me permite la api. 
+ - cantidad de preguntas
+ - tipo de preguntas
+ - categoria
+ - persistir si el usuario lo desea, o almacenar partidas pasadas.
