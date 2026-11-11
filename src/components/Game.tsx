@@ -10,6 +10,7 @@ export function Game() {
     const questions = useQuestionStore((state) => state.questions)
     const currentQuestion = useQuestionStore((state) => state.currentQuestion)
     const selectAnswer = useQuestionStore((state) => state.selectAnswer)
+    const reset = useQuestionStore((state) => state.reset)
 
     const question = useMemo( () => {    
         return questions[currentQuestion]
@@ -26,6 +27,11 @@ export function Game() {
             return 'red'
         }else{ return '' }
     }
+    const handleClick = (item: string) =>  (
+            () => { 
+                if(question.userSelect) return
+                selectAnswer(item ,currentQuestion)
+            })
 
     return (
         <div className="flex flex-col gap-3.5">
@@ -45,10 +51,7 @@ export function Game() {
                         question.allAnswers?.map((item) => {                        
                             return (
                             <li 
-                            onClick={ () => {                                                            
-                                if(question.userSelect) return
-                                selectAnswer(item ,currentQuestion)
-                            }} 
+                            onClick={handleClick(item)} 
                             key={item} 
                             style={{backgroundColor: checkAnswer(item)}} 
                             className='rounded-4xl transition-colors border-2 p-4 hover:bg-sec-c cursor-pointer'>
@@ -65,6 +68,11 @@ export function Game() {
                 <p>Correct: {correct}</p>
                 <p>Incorrect: {incorrect}</p>
                 <p>Unanswered: {unanswered}</p>
+            </div>
+            <div>
+                <button onClick={reset}>
+                    Reset
+                </button>
             </div>
         </div>
     )

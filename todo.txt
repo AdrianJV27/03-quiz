@@ -1,9 +1,18 @@
 - ✅ Quiero almacenar la respuesta del usuario
+- ✅ LocalStorage persist
+- ✅ ResetGame
+
 
 
 Para futuro usar react query para cuando le doy a play y tener opcion de configurar
 la partida como me permite la api. 
- - cantidad de preguntas
- - tipo de preguntas
- - categoria
- - persistir si el usuario lo desea, o almacenar partidas pasadas.
+ -✅ cantidad de preguntas
+ -✅ tipo de preguntas
+ -✅ categoria
+
+    - empezar con tanstackquery y mostrar pantalla de carga
+    - persistir si el usuario lo desea, o almacenar partidas pasadas.
+    - mostrar todas las preguntas a la derecha en botones con sus numeros 
+        y mostrar color verde rojo o gris si es correcta incorrecta o no 
+        respondida respectivamente como los quiz en moodle
+        

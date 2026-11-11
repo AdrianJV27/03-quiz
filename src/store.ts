@@ -1,5 +1,7 @@
 import { create } from "zustand";
 import type { Question } from "./types";
+import { shuffle } from "./helpers/shuffle";
+import { persist } from "zustand/middleware";
 
 interface State {
     currentQuestion: number
@@ -7,10 +9,11 @@ interface State {
     getQuestions: (category?: string, type?: string, difficulty?: string, amount?: string) => void;
     changeCurrentQuestion: (page: number) => void;
     isChangeQuestionPossible: (page: number) => boolean;
-    selectAnswer: (answer: string, index: number) => void
+    selectAnswer: (answer: string, index: number) => void;
+    reset: () => void;
 }
 
-export const useQuestionStore = create<State>()( (set, get) => ({
+export const useQuestionStore = create<State>()(persist(((set, get) => ({
     currentQuestion: 0,
     questions: [],
     getQuestions: (category, type = 'boolean', difficulty = 'medium', amount = '10') => {
@@ -22,10 +25,10 @@ export const useQuestionStore = create<State>()( (set, get) => ({
                 
                 return({
                 ...item,
-                allAnswers: [
+                allAnswers: shuffle([
                     ...item.incorrect_answers,
                     item.correct_answer,
-                ]
+                ])
             })})
 
             set(() => ({questions: newQuestions}))
@@ -45,9 +48,16 @@ export const useQuestionStore = create<State>()( (set, get) => ({
         set( () => {
             const newQuestions = get().questions.map( (q, i) => {
                 return i === index ? {...q, userSelect: answer} : q
-            })            
+            })
             return {questions: newQuestions}
         }) 
+    },
+    reset: () => {
+        set({currentQuestion: 0, questions: []})
     }
 
-}))
+})),
+{
+    name: 'questions'
+}
+))
