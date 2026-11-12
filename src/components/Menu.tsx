@@ -1,14 +1,31 @@
-import { useEffect, useState } from "react"
 import { useQuestionStore } from "../store"
+import { useQuery } from "@tanstack/react-query";
 
 interface Category {
     id: number;
     name: string;
 }
+interface APIResponse {
+    trivia_categories: Category[]
+}
+const categoriesAPI = () => {
+    return fetch('https://opentdb.com/api_category.php')
+    .then( res => res.json())
+    
+
+}
 
 export function Menu() {
   const getQuestions = useQuestionStore((state) => state.getQuestions)
-  const [categories, setCategories] = useState<Category[]>([])
+  const {isPending, isError, data: categories, error} = useQuery({
+    queryKey: ['categories'],
+    queryFn: categoriesAPI,
+    select: (data: APIResponse) => data.trivia_categories
+    
+  })
+  console.log({categories});
+  
+
   const amount = [
     '10',
     '20',
@@ -39,17 +56,19 @@ export function Menu() {
     getQuestions(category, type, difficulty, amount)
     
   }
-
-  useEffect(() => {
-    fetch('https://opentdb.com/api_category.php')
-    .then( res => res.json())
-    .then( (data) => {
-        setCategories(data.trivia_categories)
-    })
-  }, [])
-
+    if(isError) return (
+    <div><p>
+        Sorry there was an unexpected error
+    </p>
+    <p>
+        {error.message}
+    </p></div>
+    )
     return <div className="flex flex-col gap-5">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {
+                isPending 
+                ? <p>Loading</p>
+                : <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <select className="border rounded-2xl p-3" name="categories" id="">
                     {
                         categories.map( (item) => {
@@ -86,6 +105,6 @@ export function Menu() {
                                 transition-colors'>
                         Play
                     </button>
-            </form>
+            </form>}
             </div> 
 }
